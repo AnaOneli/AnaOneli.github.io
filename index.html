@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ana Oneli – Power BI work</title>
+<meta name="description" content="Ana Oneli builds Power BI and Microsoft Fabric reporting for manufacturing, procurement and sales teams.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f6f7f5;
+  --ink: #1c262d;
+  --muted: #5c6870;
+  --rule: #d3d9dc;
+  --link: #1d5c86;
+  --signal: #e0a100;
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Public Sans", "Segoe UI", Arial, sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #161b1f;
+    --ink: #e6eaec;
+    --muted: #9aa6ad;
+    --rule: #2e373d;
+    --link: #7fb6dc;
+    --signal: #f2bf33;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.65;
+}
+main { max-width: 680px; margin: 0 auto; padding: 72px 20px 96px; }
+a { color: var(--link); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+
+h1 { font-size: 2.6rem; font-weight: 600; line-height: 1.1; margin: 0 0 28px; letter-spacing: -0.01em; }
+h2 { font-size: 1.45rem; font-weight: 600; line-height: 1.25; margin: 0 0 16px; }
+p { margin: 0 0 18px; }
+.intro { font-size: 1.2rem; line-height: 1.55; }
+
+section { margin-top: 72px; }
+figure { margin: 28px 0 0; }
+figcaption { font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 10px; }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--sans); font-size: 12px; fill: var(--muted); }
+
+.flow { font-family: var(--sans); font-size: 15px; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; }
+.flow li { white-space: nowrap; }
+.flow li + li::before { content: "→"; color: var(--muted); margin: 0 10px; }
+
+table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; color: var(--muted); font-size: 14px; }
+.num { text-align: right; }
+
+footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--rule); }
+
+@media (max-width: 600px) {
+  body { font-size: 18px; }
+  main { padding: 48px 16px 72px; }
+  h1 { font-size: 2.1rem; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>Ana Oneli</h1>
+  <p class="intro">I'm a BI specialist based in São Paulo. For more than eight years I've built Power BI reports, mostly for manufacturing, procurement and sales teams, working remotely for international companies.</p>
+  <p>Below are four projects. I've left out client names, and the charts use made-up numbers unless the caption says otherwise. There is also a <a href="demo/">small interactive demo report</a> with OEE, yield and downtime. The easiest way to reach me is <a href="https://www.linkedin.com/in/ana-oneli/">on LinkedIn</a>.</p>
+</header>
+
+<section id="production">
+  <h2>Production KPIs, out of Excel</h2>
+  <p>A manufacturing plant tracked its production KPIs in an Excel workbook that one person updated by hand, so yield, cycle time and production reached the shift meeting late and depended on that one person.</p>
+  <p>I moved them into Power BI: DAX measures for yield, cycle time and production, a scheduled refresh that finished before each shift meeting, and views by shift, day and product with the target drawn on every trend. The production team got one report that kept itself up to date.</p>
+  <figure>
+    <svg id="yieldChart" viewBox="0 0 640 240" role="img" aria-label="Line chart of daily yield over 14 days, mostly above a 96.5% target"></svg>
+    <figcaption>Daily yield against the 96.5% target, the kind of trend the report showed for each shift. Made-up numbers.</figcaption>
+  </figure>
+</section>
+
+<section id="model-size">
+  <h2>A 1.5 GB model brought down to 0.9 GB</h2>
+  <p>A commercial reporting model had grown to 1.5 GB. Refreshing it took 40 minutes, and it was slow to open and hard to change.</p>
+  <p>I measured how much space each column took, removed the ones no visual or measure used, simplified the model around its relationships and rewrote the heaviest DAX measures. The model ended at 0.9 GB and refresh dropped to 20 minutes.</p>
+  <figure>
+    <svg id="optChart" viewBox="0 0 640 170" role="img" aria-label="Model size went from 1.5 GB to 0.9 GB; refresh time went from 40 minutes to 20"></svg>
+    <figcaption>Before and after. These are the real results; no client data is shown.</figcaption>
+  </figure>
+</section>
+
+<section id="fabric">
+  <h2>One procurement source on Microsoft Fabric</h2>
+  <p>Procurement reports each pulled SAP HANA data on their own, with their own logic, and the large SAP tables made every refresh heavy.</p>
+  <p>I brought the SAP tables in with Dataflow Gen2, landed the large ones in a Lakehouse first, shaped them into a Warehouse, and put a single semantic model on top. Ten SAP tables ended up as one governed source for procurement reporting, and no report queries SAP directly anymore.</p>
+  <figure>
+    <ol class="flow" aria-label="Data flow">
+      <li>SAP HANA</li>
+      <li>Dataflow Gen2</li>
+      <li>Lakehouse</li>
+      <li>Warehouse</li>
+      <li>Semantic model</li>
+      <li>Power BI reports</li>
+    </ol>
+  </figure>
+</section>
+
+<section id="sales">
+  <h2>Weekly sales report, from five hours to one</h2>
+  <p>A sales team rebuilt its weekly report by hand, which took about five hours every week, and every region could see everyone else's numbers.</p>
+  <p>I set up an automated ETL feeding an interactive Power BI report, added row-level security so each region saw only its own accounts, and ran short sessions with the team so they could answer their own questions. Preparation dropped to about an hour, which freed roughly 20 hours a month for customer work. Lead conversion rose 10% over the same period.</p>
+  <figure>
+    <table>
+      <thead><tr><th>Account</th><th class="num">Orders</th><th class="num">Volume</th><th class="num">vs. plan</th></tr></thead>
+      <tbody>
+        <tr><td>Account A</td><td class="num">42</td><td class="num">1,860</td><td class="num">+6%</td></tr>
+        <tr><td>Account B</td><td class="num">31</td><td class="num">1,240</td><td class="num">+2%</td></tr>
+        <tr><td>Account C</td><td class="num">27</td><td class="num">980</td><td class="num">−4%</td></tr>
+        <tr><td>Account D</td><td class="num">18</td><td class="num">610</td><td class="num">+9%</td></tr>
+      </tbody>
+    </table>
+    <figcaption>What a sales rep in the South region saw for week 18: their own accounts only. Made-up numbers.</figcaption>
+  </figure>
+</section>
+
+<section id="tools">
+  <h2>What I work with</h2>
+  <p>Power BI and the Power BI Service, DAX, Power Query and row-level security for the reports themselves. Microsoft Fabric (Lakehouse, Warehouse, Dataflow Gen2), Azure Data Factory, Databricks and SQL Server underneath. SAP HANA, SAP BW and SharePoint as sources, and Power Automate when something should happen without anyone clicking.</p>
+</section>
+
+<footer>
+  <p>Before BI, I worked in sales operations and international trade, so I start every report from the question the business is trying to answer. I work in Portuguese, English and Spanish.</p>
+  <p><a href="https://www.linkedin.com/in/ana-oneli/">Message me on LinkedIn</a></p>
+</footer>
+
+</main>
+<script>
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  var css = getComputedStyle(document.documentElement);
+  function tok(n) { return css.getPropertyValue(n).trim(); }
+
+  // Daily yield (made-up) against a 96.5% target
+  var y = [96.1, 96.4, 96.9, 96.6, 97.0, 96.3, 96.8, 97.2, 96.9, 97.1, 96.7, 97.3, 97.0, 97.4];
+  var svg = document.getElementById("yieldChart");
+  var W = 640, H = 240, L = 46, R = 48, T = 14, B = 28, min = 95.5, max = 97.5, target = 96.5;
+  function X(i) { return L + i * (W - L - R) / (y.length - 1); }
+  function Y(v) { return T + (max - v) * (H - T - B) / (max - min); }
+  [95.5, 96.0, 96.5, 97.0, 97.5].forEach(function (v) {
+    svg.appendChild(el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: tok("--rule"), "stroke-width": 1 }));
+    svg.appendChild(el("text", { x: L - 8, y: Y(v) + 4, "text-anchor": "end" }, v.toFixed(1) + "%"));
+  });
+  // shade the band above target
+  svg.appendChild(el("rect", { x: L, y: Y(max), width: W - L - R, height: Y(target) - Y(max), fill: tok("--signal"), opacity: 0.12 }));
+  svg.appendChild(el("line", { x1: L, x2: W - R, y1: Y(target), y2: Y(target), stroke: tok("--muted"), "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+  svg.appendChild(el("text", { x: W - R + 8, y: Y(target) + 4 }, "target"));
+  var d = y.map(function (v, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
+  svg.appendChild(el("path", { d: d, fill: "none", stroke: tok("--ink"), "stroke-width": 2, "stroke-linejoin": "round" }));
+  y.forEach(function (v, i) {
+    svg.appendChild(el("circle", { cx: X(i), cy: Y(v), r: 3, fill: v < target ? tok("--paper") : tok("--ink"), stroke: tok("--ink"), "stroke-width": 1.5 }));
+  });
+  var last = y.length - 1;
+  var lbl = el("text", { x: X(last) + 8, y: Y(y[last]) + 4 }, y[last].toFixed(1) + "%");
+  lbl.setAttribute("style", "fill:" + tok("--ink") + ";font-weight:600");
+  svg.appendChild(lbl);
+  [0, 6, 13].forEach(function (i) {
+    svg.appendChild(el("text", { x: X(i), y: H - 6, "text-anchor": i === 0 ? "start" : (i === 13 ? "end" : "middle") }, "day " + (i + 1)));
+  });
+
+  // Before / after, each metric on its own scale
+  var o = document.getElementById("optChart");
+  var rows = [
+    { label: "Model size", before: 1.5, after: 0.9, fmt: function (v) { return v.toFixed(1) + " GB"; }, max: 1.5 },
+    { label: "Refresh time", before: 40, after: 20, fmt: function (v) { return v + " min"; }, max: 40 }
+  ];
+  var bx = 120, bw = 420;
+  rows.forEach(function (r, ri) {
+    var top = 4 + ri * 84;
+    var t = el("text", { x: 0, y: top + 14 }, r.label);
+    t.setAttribute("style", "fill:" + tok("--ink") + ";font-weight:600;font-size:13px");
+    o.appendChild(t);
+    [["before", r.before, tok("--rule")], ["after", r.after, tok("--link")]].forEach(function (b, bi) {
+      var yy = top + 24 + bi * 26;
+      var w = bw * b[1] / r.max;
+      o.appendChild(el("text", { x: bx - 10, y: yy + 13, "text-anchor": "end" }, b[0]));
+      o.appendChild(el("rect", { x: bx, y: yy, width: w, height: 18, fill: b[2] }));
+      o.appendChild(el("text", { x: bx + w + 8, y: yy + 13 }, r.fmt(b[1])));
+    });
+  });
+})();
+</script>
+</body>
+</html>

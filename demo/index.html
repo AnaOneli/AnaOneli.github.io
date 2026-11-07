@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manufacturing report demo – Ana Oneli</title>
+<meta name="description" content="Interactive manufacturing report with OEE, yield and downtime, built on made-up data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f6f7f5; --surface: #ffffff; --ink: #1c262d; --muted: #5c6870;
+  --rule: #d3d9dc; --link: #1d5c86; --signal: #e0a100; --bad: #b4442e;
+  --serif: "Source Serif 4", Georgia, serif; --sans: "Public Sans", "Segoe UI", Arial, sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #161b1f; --surface: #1d2328; --ink: #e6eaec; --muted: #9aa6ad; --rule: #2e373d; --link: #7fb6dc; --signal: #f2bf33; --bad: #e07a63; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 40px 20px 72px; }
+
+.intro { max-width: 680px; margin-bottom: 32px; }
+.intro h1 { font-family: var(--serif); font-weight: 600; font-size: 2.2rem; line-height: 1.15; margin: 0 0 12px; }
+.intro p { font-family: var(--serif); font-size: 18px; line-height: 1.6; margin: 0 0 10px; }
+.back { font-size: 15px; }
+
+.report { background: var(--surface); border: 1px solid var(--rule); padding: 24px; }
+.bar { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: end; justify-content: space-between; margin-bottom: 20px; }
+.bar h2 { font-size: 20px; margin: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 16px; }
+fieldset { border: 0; margin: 0; padding: 0; }
+legend { font-size: 13px; color: var(--muted); margin-bottom: 4px; padding: 0; }
+.seg { display: inline-flex; border: 1px solid var(--rule); }
+.seg button { font: inherit; font-size: 14px; background: none; color: var(--ink); border: 0; padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.tile { border: 1px solid var(--rule); padding: 12px 14px; }
+.tile small { display: block; font-size: 13px; color: var(--muted); }
+.tile b { display: block; font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile span { font-size: 13px; color: var(--muted); }
+.tile span.bad { color: var(--bad); }
+
+.grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; margin-bottom: 20px; }
+.panel h3 { font-size: 15px; margin: 0 0 8px; }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--sans); font-size: 11px; fill: var(--muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
+th { color: var(--muted); font-weight: 600; font-size: 13px; }
+.num { text-align: right; }
+td.bad { color: var(--bad); font-weight: 600; }
+tr.sel td { background: color-mix(in srgb, var(--signal) 14%, transparent); }
+
+.note { font-size: 14px; color: var(--muted); margin-top: 16px; }
+
+@media (max-width: 860px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) { .wrap { padding: 28px 16px 56px; } .report { padding: 16px; } .table-wrap { overflow-x: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="intro">
+  <h1>Manufacturing report demo</h1>
+  <p>A small version of the kind of report I build: OEE, yield and downtime for three production lines. Use the filters to change the line and the period. Every number here is made up.</p>
+  <a class="back" href="../">Back to Ana Oneli's page</a>
+</div>
+
+<div class="report">
+  <div class="bar">
+    <h2 id="title">All lines, last 30 days</h2>
+    <div class="filters">
+      <fieldset><legend>Line</legend><div class="seg" id="fLine">
+        <button type="button" data-v="all" aria-pressed="true">All</button>
+        <button type="button" data-v="0" aria-pressed="false">Line 1</button>
+        <button type="button" data-v="1" aria-pressed="false">Line 2</button>
+        <button type="button" data-v="2" aria-pressed="false">Line 3</button>
+      </div></fieldset>
+      <fieldset><legend>Period</legend><div class="seg" id="fDays">
+        <button type="button" data-v="7" aria-pressed="false">7 days</button>
+        <button type="button" data-v="30" aria-pressed="true">30 days</button>
+      </div></fieldset>
+    </div>
+  </div>
+
+  <div class="tiles" aria-live="polite">
+    <div class="tile"><small>OEE</small><b id="kOee">–</b><span id="kOeeT"></span></div>
+    <div class="tile"><small>Availability</small><b id="kA">–</b></div>
+    <div class="tile"><small>Performance</small><b id="kP">–</b></div>
+    <div class="tile"><small>Quality</small><b id="kQ">–</b></div>
+    <div class="tile"><small>Downtime</small><b id="kD">–</b><span id="kDs"></span></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel"><h3>Daily OEE against the 75% target</h3><svg id="trend" viewBox="0 0 620 240" role="img" aria-label="Daily OEE trend"></svg></div>
+    <div class="panel"><h3>Downtime by reason (hours)</h3><svg id="reasons" viewBox="0 0 380 240" role="img" aria-label="Downtime hours by reason"></svg></div>
+  </div>
+
+  <div class="panel table-wrap">
+    <h3>By line</h3>
+    <table>
+      <thead><tr><th>Line</th><th class="num">OEE</th><th class="num">Availability</th><th class="num">Performance</th><th class="num">Quality</th><th class="num">Downtime</th><th class="num">Stops</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="note">OEE = availability × performance × quality. Planned time is 16 hours a day per line. Made-up data, generated in the page.</p>
+</div>
+
+</div>
+<script>
+(function () {
+  // deterministic made-up data
+  var seed = 7;
+  function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  var DAYS = 30, PLANNED = 960;
+  var REASONS = ["Changeover", "Mechanical", "Material shortage", "Quality hold", "Electrical", "Other"];
+  var lineProfile = [
+    { a: 0.89, p: 0.91, q: 0.975, w: [0.32, 0.22, 0.14, 0.12, 0.10, 0.10] },
+    { a: 0.86, p: 0.89, q: 0.968, w: [0.24, 0.34, 0.12, 0.10, 0.12, 0.08] },
+    { a: 0.84, p: 0.88, q: 0.962, w: [0.22, 0.18, 0.28, 0.16, 0.08, 0.08] }
+  ];
+  var data = lineProfile.map(function (pr) {
+    var days = [];
+    for (var d = 0; d < DAYS; d++) {
+      var a = Math.min(0.97, Math.max(0.72, pr.a + (rnd() - 0.5) * 0.10 + d * 0.0008));
+      var p = Math.min(0.97, Math.max(0.80, pr.p + (rnd() - 0.5) * 0.06));
+      var q = Math.min(0.995, Math.max(0.94, pr.q + (rnd() - 0.5) * 0.02));
+      var down = Math.round(PLANNED * (1 - a));
+      var byReason = pr.w.map(function (w) { return w * (0.7 + rnd() * 0.6); });
+      var s = byReason.reduce(function (x, y) { return x + y; }, 0);
+      byReason = byReason.map(function (v) { return v / s * down; });
+      days.push({ a: a, p: p, q: q, down: down, reasons: byReason, stops: 2 + Math.floor(rnd() * 5) });
+    }
+    return days;
+  });
+
+  var state = { line: "all", days: 30 };
+  var TARGET = 0.75;
+  var css = getComputedStyle(document.documentElement);
+  function tok(n) { return css.getPropertyValue(n).trim(); }
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, a, t) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (t != null) e.textContent = t; return e; }
+  function pct(v) { return (v * 100).toFixed(1) + "%"; }
+
+  function agg(lines, from) {
+    var planned = 0, down = 0, pSum = 0, qSum = 0, n = 0, stops = 0, reasons = REASONS.map(function () { return 0; });
+    lines.forEach(function (li) {
+      data[li].slice(from).forEach(function (d) {
+        planned += PLANNED; down += d.down; pSum += d.p; qSum += d.q; n++; stops += d.stops;
+        d.reasons.forEach(function (r, i) { reasons[i] += r; });
+      });
+    });
+    var A = 1 - down / planned, P = pSum / n, Q = qSum / n;
+    return { A: A, P: P, Q: Q, oee: A * P * Q, down: down / 60, stops: stops, reasons: reasons };
+  }
+  function daily(lines, from) {
+    var out = [];
+    for (var d = from; d < DAYS; d++) {
+      var a = 0, p = 0, q = 0;
+      lines.forEach(function (li) { var x = data[li][d]; a += x.a; p += x.p; q += x.q; });
+      var k = lines.length; out.push({ day: d + 1, oee: (a / k) * (p / k) * (q / k) });
+    }
+    return out;
+  }
+
+  function drawTrend(series) {
+    var s = document.getElementById("trend"); s.textContent = "";
+    var W = 620, H = 240, L = 44, R = 50, T = 10, B = 26, mn = 0.6, mx = 0.9;
+    function X(i) { return L + (series.length === 1 ? 0 : i * (W - L - R) / (series.length - 1)); }
+    function Y(v) { return T + (mx - Math.max(mn, Math.min(mx, v))) * (H - T - B) / (mx - mn); }
+    [0.6, 0.7, 0.8, 0.9].forEach(function (v) {
+      s.appendChild(el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: tok("--rule") }));
+      s.appendChild(el("text", { x: L - 6, y: Y(v) + 4, "text-anchor": "end" }, Math.round(v * 100) + "%"));
+    });
+    s.appendChild(el("rect", { x: L, y: Y(mx), width: W - L - R, height: Y(TARGET) - Y(mx), fill: tok("--signal"), opacity: 0.12 }));
+    s.appendChild(el("line", { x1: L, x2: W - R, y1: Y(TARGET), y2: Y(TARGET), stroke: tok("--muted"), "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+    s.appendChild(el("text", { x: W - R + 6, y: Y(TARGET) + 4 }, "target"));
+    s.appendChild(el("path", { d: series.map(function (o, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(o.oee).toFixed(1); }).join(" "), fill: "none", stroke: tok("--ink"), "stroke-width": 2, "stroke-linejoin": "round" }));
+    series.forEach(function (o, i) {
+      var c = el("circle", { cx: X(i), cy: Y(o.oee), r: 3, fill: o.oee < TARGET ? tok("--surface") : tok("--ink"), stroke: tok("--ink"), "stroke-width": 1.5 });
+      c.appendChild(el("title", {}, "Day " + o.day + ": " + pct(o.oee)));
+      s.appendChild(c);
+    });
+    var last = series[series.length - 1];
+    var ly = Y(last.oee) + 4, ty = Y(TARGET) + 4;
+    if (Math.abs(ly - ty) < 14) ly = last.oee >= TARGET ? ty - 14 : ty + 14;
+    var t = el("text", { x: X(series.length - 1) + 6, y: ly }, pct(last.oee));
+    t.setAttribute("style", "fill:" + tok("--ink") + ";font-weight:600"); s.appendChild(t);
+    var ticks = series.length > 7 ? [0, Math.floor((series.length - 1) / 2), series.length - 1] : series.map(function (_, i) { return i; });
+    ticks.forEach(function (i) {
+      s.appendChild(el("text", { x: X(i), y: H - 6, "text-anchor": i === 0 ? "start" : (i === series.length - 1 ? "end" : "middle") }, "day " + series[i].day));
+    });
+  }
+
+  function drawReasons(r) {
+    var s = document.getElementById("reasons"); s.textContent = "";
+    var items = REASONS.map(function (n, i) { return { n: n, h: r[i] / 60 }; }).sort(function (a, b) { return b.h - a.h; });
+    var max = items[0].h, bx = 118, bw = 210, rh = 38;
+    items.forEach(function (it, i) {
+      var y = 6 + i * rh, w = Math.max(2, bw * it.h / max);
+      s.appendChild(el("text", { x: bx - 8, y: y + 17, "text-anchor": "end" }, it.n));
+      s.appendChild(el("rect", { x: bx, y: y + 4, width: w, height: 20, fill: i === 0 ? tok("--signal") : tok("--rule") }));
+      s.appendChild(el("text", { x: bx + w + 6, y: y + 18 }, it.h.toFixed(1)));
+    });
+  }
+
+  function render() {
+    var from = DAYS - state.days;
+    var lines = state.line === "all" ? [0, 1, 2] : [+state.line];
+    var a = agg(lines, from);
+    document.getElementById("title").textContent = (state.line === "all" ? "All lines" : "Line " + (+state.line + 1)) + ", last " + state.days + " days";
+    document.getElementById("kOee").textContent = pct(a.oee);
+    var diff = (a.oee - TARGET) * 100, kt = document.getElementById("kOeeT");
+    kt.textContent = (diff >= 0 ? "+" : "−") + Math.abs(diff).toFixed(1) + " pt vs. target";
+    kt.className = diff < 0 ? "bad" : "";
+    document.getElementById("kA").textContent = pct(a.A);
+    document.getElementById("kP").textContent = pct(a.P);
+    document.getElementById("kQ").textContent = pct(a.Q);
+    document.getElementById("kD").textContent = a.down.toFixed(1) + " h";
+    document.getElementById("kDs").textContent = a.stops + " stops";
+    drawTrend(daily(lines, from));
+    drawReasons(a.reasons);
+    var tb = document.getElementById("rows"); tb.textContent = "";
+    [0, 1, 2].forEach(function (li) {
+      var x = agg([li], from), tr = document.createElement("tr");
+      if (state.line !== "all" && +state.line === li) tr.className = "sel";
+      [["Line " + (li + 1), ""], [pct(x.oee), x.oee < TARGET ? "num bad" : "num"], [pct(x.A), "num"], [pct(x.P), "num"], [pct(x.Q), "num"], [x.down.toFixed(1) + " h", "num"], [x.stops, "num"]]
+        .forEach(function (c) { var td = document.createElement("td"); td.textContent = c[0]; if (c[1]) td.className = c[1]; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+
+  function wire(id, key, num) {
+    var g = document.getElementById(id);
+    g.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      g.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      state[key] = num ? +b.dataset.v : b.dataset.v; render();
+    });
+  }
+  wire("fLine", "line", false); wire("fDays", "days", true);
+  render();
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { css = getComputedStyle(document.documentElement); render(); });
+})();
+</script>
+</body>
+</html>
