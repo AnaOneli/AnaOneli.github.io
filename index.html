@@ -1,219 +1,341 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ana Oneli – Power BI work</title>
-<meta name="description" content="Ana Oneli builds Power BI and Microsoft Fabric reporting for manufacturing, procurement and sales teams.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ana Oneli: Power BI and Microsoft Fabric work">
-<meta property="og:description" content="Power BI and Microsoft Fabric reporting for manufacturing, procurement and sales teams. Four case studies and a demo report.">
-<meta property="og:url" content="https://anaoneli.github.io/">
-<meta property="og:image" content="https://anaoneli.github.io/preview.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="627">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ana Oneli, Power BI Developer. Power BI, Microsoft Fabric, DAX and SAP reporting for manufacturing, procurement and sales teams. English, Portuguese and Spanish.">
+<meta property="og:title" content="Ana Oneli · Power BI Developer">
+<meta property="og:description" content="Power BI, Microsoft Fabric, DAX and SAP reporting for manufacturing, procurement and sales teams.">
+<meta property="og:image" content="https://anaoneli.github.io/images/07-executive-platform.png">
+<style>html{color-scheme:light dark}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Ana Oneli · Power BI Developer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
-:root {
-  --paper: #f6f7f5;
-  --ink: #1c262d;
-  --muted: #5c6870;
-  --rule: #d3d9dc;
-  --link: #1d5c86;
-  --signal: #e0a100;
-  --serif: "Source Serif 4", Georgia, serif;
-  --sans: "Public Sans", "Segoe UI", Arial, sans-serif;
-  color-scheme: light dark;
+/* Layout: a control-room report. Narrow condensed headline, a heat stripe down the left edge, projects as report sheets with a cover and a spec column. */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --line:#D3D9E0; --ink:#12161B; --mute:#55606C;
+  --heat:#B4560F; --heat-soft:#F29F3D; --chip:#E3E8ED;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"Instrument Sans","Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+  --measure:65ch;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #161b1f;
-    --ink: #e6eaec;
-    --muted: #9aa6ad;
-    --rule: #2e373d;
-    --link: #7fb6dc;
-    --signal: #f2bf33;
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161B; --surface:#1A2027; --line:#2E3843; --ink:#E7EBEF; --mute:#94A0AD;
+    --heat:#F29F3D; --heat-soft:#F29F3D; --chip:#212932; color-scheme:dark;
   }
 }
-* { box-sizing: border-box; }
-html, body { margin: 0; }
-body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 19px;
-  line-height: 1.65;
+:root[data-theme="dark"]{
+  --bg:#12161B; --surface:#1A2027; --line:#2E3843; --ink:#E7EBEF; --mute:#94A0AD;
+  --heat:#F29F3D; --heat-soft:#F29F3D; --chip:#212932; color-scheme:dark;
 }
-main { max-width: 680px; margin: 0 auto; padding: 72px 20px 96px; }
-a { color: var(--link); text-underline-offset: 3px; }
-a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+body::after{content:"";position:fixed;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--heat-soft),#C9671E 60%,#7a3410);pointer-events:none}
+.page{max-width:1120px;margin:0 auto;padding-block:40px 72px;display:flex;flex-direction:column;gap:88px}
+a{color:inherit}
+a:focus-visible{outline:2px solid var(--heat);outline-offset:3px}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.eyebrow{font-family:var(--mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--heat)}
 
-h1 { font-size: 2.6rem; font-weight: 600; line-height: 1.1; margin: 0 0 28px; letter-spacing: -0.01em; }
-h2 { font-size: 1.45rem; font-weight: 600; line-height: 1.25; margin: 0 0 16px; }
-p { margin: 0 0 18px; }
-.intro { font-size: 1.2rem; line-height: 1.55; }
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.top .name{font-family:var(--display);font-stretch:80%;font-weight:800;font-size:22px;letter-spacing:.02em;text-transform:uppercase}
+.top nav{display:flex;gap:22px;flex-wrap:wrap}
+.top nav a{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);text-decoration:none}
+.top nav a:hover{color:var(--heat)}
 
-section { margin-top: 72px; }
-figure { margin: 28px 0 0; }
-figcaption { font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 10px; }
-svg { display: block; width: 100%; height: auto; }
-svg text { font-family: var(--sans); font-size: 12px; fill: var(--muted); }
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:56px;align-items:end}
+.hero h1{font-family:var(--display);font-stretch:68%;font-weight:850;font-size:clamp(56px,10vw,128px);line-height:.88;letter-spacing:-.01em;text-transform:uppercase;margin:18px 0 0;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--heat)}
+.hero .intro{display:flex;flex-direction:column;gap:22px}
+.hero p{margin:0;font-size:19px;max-width:var(--measure)}
+.cta{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;padding:14px 22px;background:var(--ink);color:var(--bg);text-decoration:none;font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.cta:hover{background:var(--heat);color:#12161B}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px}
+.demo-link{font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:underline;text-decoration-color:var(--heat);text-decoration-thickness:2px;text-underline-offset:5px}
+.demo-link:hover,.demo-link:focus-visible{color:var(--heat)}
 
-.flow { font-family: var(--sans); font-size: 15px; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; }
-.flow li { white-space: nowrap; }
-.flow li + li::before { content: "→"; color: var(--muted); margin: 0 10px; }
+/* readout strip */
+.readout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid var(--ink);border-bottom:1px solid var(--line)}
+.readout div{padding:18px 18px 20px 0;display:flex;flex-direction:column;gap:4px}
+.readout div + div{padding-left:18px;border-left:1px solid var(--line)}
+.readout strong{font-family:var(--display);font-stretch:75%;font-weight:800;font-size:44px;line-height:1;font-variant-numeric:tabular-nums}
+.readout span{font-size:14px;color:var(--mute);line-height:1.4}
 
-table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 15px; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); }
-th { font-weight: 600; color: var(--muted); font-size: 14px; }
-.num { text-align: right; }
+/* sections */
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+h2{font-family:var(--display);font-stretch:72%;font-weight:800;font-size:clamp(36px,5vw,56px);line-height:1;text-transform:uppercase;margin:0;text-wrap:balance}
 
-footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--rule); }
+/* projects */
+.projects{display:flex;flex-direction:column;gap:56px}
+.proj{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:36px;align-items:start;padding-top:28px;border-top:1px solid var(--line)}
+.proj:nth-child(even) figure{order:2}
+.proj figure{margin:0;border:1px solid var(--line);background:#12161B}
+.proj img{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:4/3}
+.proj .body{display:flex;flex-direction:column;gap:16px}
+.proj h3{font-family:var(--display);font-stretch:80%;font-weight:750;font-size:30px;line-height:1.08;margin:0;text-wrap:balance}
+.proj p{margin:0;max-width:var(--measure)}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:4px 0 0;font-size:15px}
+.spec dt{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:3px}
+.spec dd{margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags span{font-family:var(--mono);font-size:13px;padding:5px 10px;background:var(--chip);border:1px solid var(--line)}
 
-@media (max-width: 600px) {
-  body { font-size: 18px; }
-  main { padding: 48px 16px 72px; }
-  h1 { font-size: 2.1rem; }
+/* services + process */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px}
+.svc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.svc li{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.svc li:first-child{border-top:2px solid var(--ink)}
+.svc b{font-weight:600}
+.svc span{color:var(--mute);font-size:15px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
+.steps li:first-child{border-top:2px solid var(--ink)}
+.steps .n{font-family:var(--display);font-stretch:75%;font-weight:800;font-size:34px;line-height:1;color:var(--heat)}
+.steps b{display:block;font-weight:600}
+.steps span{color:var(--mute);font-size:15px}
+
+.stack{display:flex;flex-wrap:wrap;gap:8px}
+.stack span{font-family:var(--mono);font-size:14px;padding:8px 12px;border:1px solid var(--line);background:var(--surface)}
+
+/* contact */
+.contact{background:var(--surface);border:1px solid var(--line);padding:clamp(24px,5vw,48px);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;align-items:center}
+.contact p{margin:12px 0 0;max-width:var(--measure);color:var(--mute)}
+.contact .cta{justify-self:start}
+footer{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mute);text-transform:uppercase;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px}
+
+@media (max-width: 860px){
+  .hero,.proj,.two,.contact{grid-template-columns:minmax(0,1fr)}
+  .proj:nth-child(even) figure{order:0}
+  .readout{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .readout div:nth-child(3){padding-left:0;border-left:0}
+  .readout div:nth-child(n+3){border-top:1px solid var(--line)}
+  .page{gap:64px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .cta{transition:background .15s,color .15s}
 }
 </style>
 </head>
 <body>
-<main>
 
-<header>
-  <h1>Ana Oneli</h1>
-  <p class="intro">I'm a BI specialist based in São Paulo. For more than eight years I've built Power BI reports, mostly for manufacturing, procurement and sales teams, working remotely for international companies.</p>
-  <p>Below are four projects. I've left out client names, and the charts use made-up numbers unless the caption says otherwise. There is also a <a href="demo/">small interactive demo report</a> with OEE, yield and downtime. The easiest way to reach me is <a href="https://www.linkedin.com/in/ana-oneli/">on LinkedIn</a>.</p>
-</header>
+<div class="page">
+  <header class="top">
+    <span class="name">Ana Oneli</span>
+    <nav aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-<section id="production">
-  <h2>Production KPIs, out of Excel</h2>
-  <p>A manufacturing plant tracked its production KPIs in an Excel workbook that one person updated by hand, so yield, cycle time and production reached the shift meeting late and depended on that one person.</p>
-  <p>I moved them into Power BI: DAX measures for yield, cycle time and production, a scheduled refresh that finished before each shift meeting, and views by shift, day and product with the target drawn on every trend. The production team got one report that kept itself up to date.</p>
-  <figure>
-    <svg id="yieldChart" viewBox="0 0 640 240" role="img" aria-label="Line chart of daily yield over 14 days, mostly above a 96.5% target"></svg>
-    <figcaption>Daily yield against the 96.5% target, the kind of trend the report showed for each shift. Made-up numbers.</figcaption>
-  </figure>
-</section>
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Power BI developer · Microsoft Fabric · SAP</span>
+      <h1>Data the shift trusts at <em>6 a.m.</em></h1>
+    </div>
+    <div class="intro">
+      <p>In most companies the numbers that matter live in spreadsheets, SAP extracts and one person's head. That costs hours of copy-paste every week and meetings spent arguing about which version is right.</p>
+      <p>I build the layer that fixes it. As a BI Specialist at a global steel manufacturer, I have delivered Power BI for teams in the US, Brazil and France, across procurement, operations, sales, EHS and HR.</p>
+      <div class="cta-row">
+        <a class="cta" href="#contact">Discuss a project</a>
+        <a class="demo-link" href="https://anaoneli.github.io/demo/" target="_blank" rel="noopener">Try a live demo report →</a>
+      </div>
+    </div>
+  </section>
 
-<section id="model-size">
-  <h2>A 1.5 GB model brought down to 0.9 GB</h2>
-  <p>A commercial reporting model had grown to 1.5 GB. Refreshing it took 40 minutes, and it was slow to open and hard to change.</p>
-  <p>I measured how much space each column took, removed the ones no visual or measure used, simplified the model around its relationships and rewrote the heaviest DAX measures. The model ended at 0.9 GB and refresh dropped to 20 minutes.</p>
-  <figure>
-    <svg id="optChart" viewBox="0 0 640 170" role="img" aria-label="Model size went from 1.5 GB to 0.9 GB; refresh time went from 40 minutes to 20"></svg>
-    <figcaption>Before and after. These are the real results; no client data is shown.</figcaption>
-  </figure>
-</section>
+  <section class="readout" aria-label="Results">
+    <div><strong>5 h → 1 h</strong><span>weekly sales report, automated</span></div>
+    <div><strong>−41%</strong><span>model size, refresh time cut in half</span></div>
+    <div><strong>+15%</strong><span>forecast accuracy after a dashboard redesign</span></div>
+    <div><strong>3</strong><span>working languages: English, Portuguese, Spanish</span></div>
+  </section>
 
-<section id="fabric">
-  <h2>One procurement source on Microsoft Fabric</h2>
-  <p>Procurement reports each pulled SAP HANA data on their own, with their own logic, and the large SAP tables made every refresh heavy.</p>
-  <p>I brought the SAP tables in with Dataflow Gen2, landed the large ones in a Lakehouse first, shaped them into a Warehouse, and put a single semantic model on top. Ten SAP tables ended up as one governed source for procurement reporting, and no report queries SAP directly anymore.</p>
-  <figure>
-    <ol class="flow" aria-label="Data flow">
-      <li>SAP HANA</li>
-      <li>Dataflow Gen2</li>
-      <li>Lakehouse</li>
-      <li>Warehouse</li>
-      <li>Semantic model</li>
-      <li>Power BI reports</li>
-    </ol>
-  </figure>
-</section>
+  <section id="work">
+    <div class="sec-head">
+      <h2>Selected work</h2>
+      <span class="label">Client anonymized · dashboards show sample data</span>
+    </div>
+    <div class="projects">
+      <article class="proj">
+        <figure><img src="images/07-executive-platform.png" alt="Weekly executive report with production versus plan by week" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Executive reporting · team project</span>
+          <h3>Executive Power BI platform for eight business areas</h3>
+          <p>One Power BI app for the European division of a global steel manufacturer: Production, Commercial, Health &amp; Safety, HR, Logistics, Scrap Procurement and IT. Leadership uses it in the weekly C-level meeting to track production, shipments, order book and OTIF against plan.</p>
+          <dl class="spec">
+            <dt>Before</dt><dd>Plant figures collected by e-mail every week and consolidated by hand.</dd>
+            <dt>Built</dt><dd>Power App for plant inputs, Data Factory and Databricks pipelines, SAP BW dataflows, plant-level security, Dev/UAT/Production workspaces under Azure DevOps.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>Data Factory</span><span>Databricks</span><span>SAP BW</span><span>Power Apps</span></div>
+        </div>
+      </article>
 
-<section id="sales">
-  <h2>Weekly sales report, from five hours to one</h2>
-  <p>A sales team rebuilt its weekly report by hand, which took about five hours every week, and every region could see everyone else's numbers.</p>
-  <p>I set up an automated ETL feeding an interactive Power BI report, added row-level security so each region saw only its own accounts, and ran short sessions with the team so they could answer their own questions. Preparation dropped to about an hour, which freed roughly 20 hours a month for customer work. Lead conversion rose 10% over the same period.</p>
-  <figure>
-    <table>
-      <thead><tr><th>Account</th><th class="num">Orders</th><th class="num">Volume</th><th class="num">vs. plan</th></tr></thead>
-      <tbody>
-        <tr><td>Account A</td><td class="num">42</td><td class="num">1,860</td><td class="num">+6%</td></tr>
-        <tr><td>Account B</td><td class="num">31</td><td class="num">1,240</td><td class="num">+2%</td></tr>
-        <tr><td>Account C</td><td class="num">27</td><td class="num">980</td><td class="num">−4%</td></tr>
-        <tr><td>Account D</td><td class="num">18</td><td class="num">610</td><td class="num">+9%</td></tr>
-      </tbody>
-    </table>
-    <figcaption>What a sales rep in the South region saw for week 18: their own accounts only. Made-up numbers.</figcaption>
-  </figure>
-</section>
+      <article class="proj">
+        <figure><img src="images/01-optimization.png" alt="Before and after: model size from 1.5 to 0.9 GB, refresh time from 40 to 20 minutes" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Performance</span>
+          <h3>A Power BI model 41% smaller, with refresh time cut in half</h3>
+          <p>A cold rolling mill's information center had grown to 1.5 GB, took 40 minutes to refresh, and few people used it. I removed unused columns, simplified relationships and rewrote heavy DAX, then redesigned the pages around what the plant asks each shift.</p>
+          <dl class="spec">
+            <dt>Result</dt><dd>0.9 GB model, 20-minute refresh. With the procurement redesign, adoption reached 40% of users.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>DAX</span><span>Data modeling</span><span>Report design</span></div>
+        </div>
+      </article>
 
-<section id="tools">
-  <h2>What I work with</h2>
-  <p>Power BI and the Power BI Service, DAX, Power Query and row-level security for the reports themselves. Microsoft Fabric (Lakehouse, Warehouse, Dataflow Gen2), Azure Data Factory, Databricks and SQL Server underneath. SAP HANA, SAP BW and SharePoint as sources, and Power Automate when something should happen without anyone clicking.</p>
-</section>
+      <article class="proj">
+        <figure><img src="images/02-fabric.png" alt="Fabric pipeline from SAP HANA to Dataflow Gen2, Lakehouse, Warehouse and Power BI" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Microsoft Fabric</span>
+          <h3>Procurement data platform on Microsoft Fabric</h3>
+          <p>A US steel plant's procurement team reported from scattered SAP extracts, so every analyst had a different version of the numbers. I built SAP HANA → Dataflow Gen2 → Lakehouse → Warehouse, consolidating 10 SAP tables into one governed source, with a Power BI Procurement Center on top.</p>
+          <dl class="spec">
+            <dt>Result</dt><dd>Supported a 15% gain in forecast accuracy and a 5% reduction in holding costs.</dd>
+          </dl>
+          <div class="tags"><span>Microsoft Fabric</span><span>Dataflow Gen2</span><span>Lakehouse</span><span>SAP HANA</span><span>Power BI</span></div>
+        </div>
+      </article>
 
-<footer>
-  <p>Before BI, I worked in sales operations and international trade, so I start every report from the question the business is trying to answer. I work in Portuguese, English and Spanish.</p>
-  <p><a href="https://www.linkedin.com/in/ana-oneli/">Message me on LinkedIn</a></p>
-</footer>
+      <article class="proj">
+        <figure><img src="images/03-casting.png" alt="Continuous casting report with slab yield, cycle time by heat and results by shift" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Excel to Power BI</span>
+          <h3>Continuous casting KPIs for a melt shop</h3>
+          <p>The melt shop tracked casting KPIs in an Excel workbook someone updated by hand. I rebuilt it in Power BI with automatic refresh: slab yield, cycle times and production by shift, day, month and year to date, against targets.</p>
+          <dl class="spec">
+            <dt>Result</dt><dd>One report instead of a spreadsheet to maintain, and the same numbers for every shift.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>DAX</span><span>Excel</span><span>Power Query</span></div>
+        </div>
+      </article>
 
-</main>
-<script>
-(function () {
-  var NS = "http://www.w3.org/2000/svg";
-  function el(tag, attrs, text) {
-    var e = document.createElementNS(NS, tag);
-    for (var k in attrs) e.setAttribute(k, attrs[k]);
-    if (text != null) e.textContent = text;
-    return e;
-  }
-  var css = getComputedStyle(document.documentElement);
-  function tok(n) { return css.getPropertyValue(n).trim(); }
+      <article class="proj">
+        <figure><img src="images/04-galvanizing.png" alt="Line efficiency of three galvanizing lines against target, with product mix" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Manufacturing</span>
+          <h3>Information center for three galvanizing lines</h3>
+          <p>Operating hours, throughput in tons per hour, product mix and line efficiency for three hot-dip galvanizing lines.</p>
+          <dl class="spec">
+            <dt>Built</dt><dd>A standardized DAX measure layer, so all three lines are calculated the same way and a new KPI is one measure, not three.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>DAX</span><span>Data modeling</span></div>
+        </div>
+      </article>
 
-  // Daily yield (made-up) against a 96.5% target
-  var y = [96.1, 96.4, 96.9, 96.6, 97.0, 96.3, 96.8, 97.2, 96.9, 97.1, 96.7, 97.3, 97.0, 97.4];
-  var svg = document.getElementById("yieldChart");
-  var W = 640, H = 240, L = 46, R = 48, T = 14, B = 28, min = 95.5, max = 97.5, target = 96.5;
-  function X(i) { return L + i * (W - L - R) / (y.length - 1); }
-  function Y(v) { return T + (max - v) * (H - T - B) / (max - min); }
-  [95.5, 96.0, 96.5, 97.0, 97.5].forEach(function (v) {
-    svg.appendChild(el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: tok("--rule"), "stroke-width": 1 }));
-    svg.appendChild(el("text", { x: L - 8, y: Y(v) + 4, "text-anchor": "end" }, v.toFixed(1) + "%"));
-  });
-  // shade the band above target
-  svg.appendChild(el("rect", { x: L, y: Y(max), width: W - L - R, height: Y(target) - Y(max), fill: tok("--signal"), opacity: 0.12 }));
-  svg.appendChild(el("line", { x1: L, x2: W - R, y1: Y(target), y2: Y(target), stroke: tok("--muted"), "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
-  svg.appendChild(el("text", { x: W - R + 8, y: Y(target) + 4 }, "target"));
-  var d = y.map(function (v, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); }).join(" ");
-  svg.appendChild(el("path", { d: d, fill: "none", stroke: tok("--ink"), "stroke-width": 2, "stroke-linejoin": "round" }));
-  y.forEach(function (v, i) {
-    svg.appendChild(el("circle", { cx: X(i), cy: Y(v), r: 3, fill: v < target ? tok("--paper") : tok("--ink"), stroke: tok("--ink"), "stroke-width": 1.5 }));
-  });
-  var last = y.length - 1;
-  var lbl = el("text", { x: X(last) + 8, y: Y(y[last]) + 4 }, y[last].toFixed(1) + "%");
-  lbl.setAttribute("style", "fill:" + tok("--ink") + ";font-weight:600");
-  svg.appendChild(lbl);
-  [0, 6, 13].forEach(function (i) {
-    svg.appendChild(el("text", { x: X(i), y: H - 6, "text-anchor": i === 0 ? "start" : (i === 13 ? "end" : "middle") }, "day " + (i + 1)));
-  });
+      <article class="proj">
+        <figure><img src="images/05-monitoring.png" alt="Monitoring report listing pipeline, job, dataset and dataflow runs" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Reliability</span>
+          <h3>Monitoring for Power BI, Data Factory and Databricks</h3>
+          <p>A report that watches the reporting platform itself: Data Factory pipelines, Databricks jobs, Power BI datasets and dataflows. It refreshes hourly and e-mails the team when anything fails.</p>
+          <dl class="spec">
+            <dt>Result</dt><dd>Load failures caught before users saw stale numbers. Handed over with documentation in English and Portuguese.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>Log Analytics</span><span>Data Factory</span><span>Databricks</span><span>REST API</span></div>
+        </div>
+      </article>
 
-  // Before / after, each metric on its own scale
-  var o = document.getElementById("optChart");
-  var rows = [
-    { label: "Model size", before: 1.5, after: 0.9, fmt: function (v) { return v.toFixed(1) + " GB"; }, max: 1.5 },
-    { label: "Refresh time", before: 40, after: 20, fmt: function (v) { return v + " min"; }, max: 40 }
-  ];
-  var bx = 120, bw = 420;
-  rows.forEach(function (r, ri) {
-    var top = 4 + ri * 84;
-    var t = el("text", { x: 0, y: top + 14 }, r.label);
-    t.setAttribute("style", "fill:" + tok("--ink") + ";font-weight:600;font-size:13px");
-    o.appendChild(t);
-    [["before", r.before, tok("--rule")], ["after", r.after, tok("--link")]].forEach(function (b, bi) {
-      var yy = top + 24 + bi * 26;
-      var w = bw * b[1] / r.max;
-      o.appendChild(el("text", { x: bx - 10, y: yy + 13, "text-anchor": "end" }, b[0]));
-      o.appendChild(el("rect", { x: bx, y: yy, width: w, height: 18, fill: b[2] }));
-      o.appendChild(el("text", { x: bx + w + 8, y: yy + 13 }, r.fmt(b[1])));
-    });
-  });
-})();
-</script>
+      <article class="proj">
+        <figure><img src="images/06-sales.png" alt="Sales report: preparation time from 5 hours to 1 hour, with weekly net sales" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Sales</span>
+          <h3>Weekly sales report automated: 5 hours down to 1</h3>
+          <p>The sales team spent about 5 hours a week preparing its report. I automated the ETL and built a Power BI report with row-level security, so each region sees only its own data and can serve itself.</p>
+          <dl class="spec">
+            <dt>Result</dt><dd>80% less preparation time, 20 hours a month freed for customers. Lead conversion rose 10% over the same period.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>ETL</span><span>Row-level security</span><span>DAX</span></div>
+        </div>
+      </article>
+
+      <article class="proj">
+        <figure><img src="images/08-safety.png" alt="Health and safety dashboard with incident pyramid and frequency trend" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Health &amp; Safety · team project</span>
+          <h3>Safety analytics combining three source systems</h3>
+          <p>Incident data from two safety platforms and SAP EHS in one executive view for production and EHS teams: incident pyramid, lost-time and process-safety frequency rates, 12-month rolling trends and a business-unit benchmark.</p>
+          <dl class="spec">
+            <dt>Before</dt><dd>A weekly PowerPoint built by hand.</dd>
+            <dt>Built</dt><dd>A weekly report page that estimates worked hours while the monthly close is open, with security by plant and company.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>DAX</span><span>SAP EHS</span><span>Power Automate</span><span>RLS</span></div>
+        </div>
+      </article>
+
+      <article class="proj">
+        <figure><img src="images/09-commercial.png" alt="Commercial dashboard with order book by delivery month" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">Commercial · team project</span>
+          <h3>Commercial performance on SAP BW data</h3>
+          <p>Nineteen pages for sales leadership: orders entered, orders on hand, order book, invoicing, prices, coverage, lead time, OTIF, claims and market share.</p>
+          <dl class="spec">
+            <dt>Built</dt><dd>SAP BW queries through Power BI dataflows, combined with SharePoint inputs and Databricks extractions. A shared calendar and filters keep every page consistent.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>SAP BW</span><span>Dataflows</span><span>DAX</span><span>Power Query</span></div>
+        </div>
+      </article>
+
+      <article class="proj">
+        <figure><img src="images/10-hr.png" alt="HR dashboard with headcount trend and data quality checks" width="1600" height="1200" loading="lazy"></figure>
+        <div class="body">
+          <span class="eyebrow">People · team project</span>
+          <h3>HR dashboard with automatic data quality checks</h3>
+          <p>Headcount and FTE, hires and leavers, absenteeism, conflict-of-interest declarations and compliance training for a multi-plant division.</p>
+          <dl class="spec">
+            <dt>Built</dt><dd>SAP BW cube queries in Power Query M with a dynamic month parameter, SharePoint absenteeism files, 18 checks on HR master data and plant-level security.</dd>
+          </dl>
+          <div class="tags"><span>Power BI</span><span>Power Query M</span><span>SAP BW</span><span>RLS</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="services" class="two">
+    <div>
+      <div class="sec-head"><h2>What I can build for you</h2></div>
+      <ul class="svc">
+        <li><b>Power BI dashboards and data models</b><span>Star schema, DAX measures, pages designed around decisions.</span></li>
+        <li><b>Excel to Power BI</b><span>Replace manual workbooks and weekly packs with refreshed reports.</span></li>
+        <li><b>Faster reports</b><span>Smaller models, quicker refresh, measures that scale.</span></li>
+        <li><b>Microsoft Fabric and Azure</b><span>Lakehouse, Warehouse, Dataflow Gen2, Data Factory, Databricks.</span></li>
+        <li><b>SAP and other sources</b><span>SAP HANA, SAP BW, SQL Server, SharePoint, Excel.</span></li>
+        <li><b>Security, monitoring, handover</b><span>Row-level security, refresh alerts and documentation your team can use.</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="sec-head"><h2>How I work</h2></div>
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>Start from the decision</b><span>We agree on what the report must answer and which KPIs matter.</span></div></li>
+        <li><span class="n">2</span><div><b>A small first milestone</b><span>A fixed-price first step, such as the data model and one page, so you can judge the work early.</span></div></li>
+        <li><span class="n">3</span><div><b>Build in short iterations</b><span>You review each step in a test workspace before it goes live.</span></div></li>
+        <li><span class="n">4</span><div><b>Hand over cleanly</b><span>Documentation, access rules and a walkthrough for whoever maintains it next.</span></div></li>
+      </ol>
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px">
+        <span class="label">Background</span>
+        <p style="margin:0;max-width:var(--measure)">Before BI I worked in sales operations and international trade at RFS, Logicalis, Getinge and Dow, where I started building Power BI for my own teams. That is why I start from the business question, not the chart.</p>
+        <span class="label" style="margin-top:12px">Tools</span>
+        <div class="stack"><span>Power BI</span><span>DAX</span><span>Power Query M</span><span>Microsoft Fabric</span><span>Azure Data Factory</span><span>Databricks</span><span>SQL Server</span><span>SAP HANA</span><span>SAP BW</span><span>Power Automate</span><span>SharePoint</span><span>Excel</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div>
+      <h2>Have a report to build or fix?</h2>
+      <p>Tell me what decision the report needs to support and where the data lives. I will reply with a suggested approach and a fixed-price first milestone.</p>
+    </div>
+    <a class="cta" href="https://www.upwork.com/freelancers/~011ee8684b4055a043" target="_blank" rel="noopener">Message me on Upwork</a>
+  </section>
+
+  <footer><span>Ana Oneli · São Paulo, Brazil</span><span>English · Português · Español</span></footer>
+</div>
 </body>
 </html>
